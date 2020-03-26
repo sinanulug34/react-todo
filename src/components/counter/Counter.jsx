@@ -23,12 +23,12 @@ class Counter extends Component{
   }
 
   increment(by){
-  
-    
     //console.log(`incremet from parent - ${by}`)
-     this.setState({
-       counter: this.state.counter +by
-     });
+     this.setState(
+      (prevState) => {
+       return {counter: prevState.counter +by}
+       }
+    );
      }
 }
 class Counterbutton extends Component{
