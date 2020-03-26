@@ -1,34 +1,66 @@
 import './Counter.css'
 import React,{ Component } from 'react';
+import PropTypes from 'prop-types'
 
 class Counter extends Component{
-      //define the initial state in a constructor
-      // state => counter 0
-    constructor(){
-      //initial for a specific compenent in React
-      super() // you call this super() method, you can not without this method using this.state.counter //Error 1
+  constructor(){
+    super()
+    this.state = {
+      counter : 0
+    } 
+    this.increment = this.increment.bind(this)
+  }
+
+  render (){
+    return (
+      <div className ="counter"> 
+        <Counterbutton by = {1} incrementMethod={this.increment}/>
+        <Counterbutton by ={5} incrementMethod={this.increment}/>
+        <Counterbutton by={10} incrementMethod={this.increment}/>
+    <span className="count">{this.state.counter}</span>
+      </div>
+    );
+  }
+
+  increment(by){
+  
+    
+    //console.log(`incremet from parent - ${by}`)
+     this.setState({
+       counter: this.state.counter +by
+     });
+     }
+}
+class Counterbutton extends Component{
+    constructor(){    
+
+      super()
       this.state = {
         counter : 0
       }
-      //what is the meaning of ? 
       this.increment = this.increment.bind(this)
     }
+    
   render (){
+    const style={fontSize:"50px",padding:" 15px 30px"}
   return (
     <div className="counter">
-      <button onClick={this.increment}>+1</button>
-      <span className="count">{this.state.counter}</span>
+      <button onClick={this.increment} >+ {this.props.by}</button>
     </div>
   )
 }
-// eğer bir methodu class içerisinden call edeceksek, function keyword unu kaldırmalısın.
- increment(){ //update state - counter++
-  //console.log('increment');
-  this.state.counter++;
-  // you dont update the state ıf the component directly
+increment(){ 
   this.setState({
-    state: this.state.counter + 1
+    counter: this.state.counter + this.props.by
   }); 
+  this.props.incrementMethod(this.props.by);
   }
 }
+Counterbutton.defaultProps = {
+    by:1
+}
+Counterbutton.propTypes={
+  by: PropTypes.number
+}
 export default Counter
+
