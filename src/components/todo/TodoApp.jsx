@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom'
+import AuthenticationService from './AuthenticationService.js'
 
 class TodoApp extends Component {
     render() {
@@ -27,7 +28,12 @@ class TodoApp extends Component {
 }
 class WelcomeComponent extends Component {
     render() {
-        return <div>Welcome {this.props.match.params.name} You can manage your todos <Link to="/todos"> here</Link></div>
+        return (
+            <>
+                <h1>Welcome!</h1>
+                <div>Welcome {this.props.match.params.name} You can manage your todos <Link to="/todos"> here</Link></div>
+            </>
+        )
     }
 }
 
@@ -56,8 +62,8 @@ class FooterComponent extends Component {
     render() {
         return (
             <footer className="footer">
-                    <span className="text-muted">
-                        All Rights Reserved 2020
+                <span className="text-muted">
+                    All Rights Reserved 2020
                     </span>
             </footer>
         )
@@ -71,7 +77,7 @@ class LogoutComponent extends Component {
                 <div className="container">
                     Thank you for using our application
                 </div>
-               </div>
+            </div>
         )
     }
 }
@@ -93,30 +99,34 @@ class ListTodosComponent extends Component {
     render() {
         return (<div>
             <h1>List Todos</h1>
-            <table>
-                <thead>
-                    <tr>
-                        <th>id </th>
-                        <th>description</th>
-                        <th>Target Date</th>
-                        <th>Is Completed?</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        this.state.todos.map(
-                            todo =>
-                                <tr>
-                                    <td>{todo.id}</td>
-                                    <td>{todo.description}</td>
-                                    <td>{todo.done.toString()}</td>
-                                    <td>{todo.targetDate.toString()}</td>
-                                </tr>
-                        )
-                    }
+            <div className="container">
 
-                </tbody>
-            </table>
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th>id </th>
+                            <th>description</th>
+                            <th>Target Date</th>
+                            <th>Is Completed?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            this.state.todos.map(
+                                todo =>
+                                    <tr>
+                                        <td>{todo.id}</td>
+                                        <td>{todo.description}</td>
+                                        <td>{todo.done.toString()}</td>
+                                        <td>{todo.targetDate.toString()}</td>
+                                    </tr>
+                            )
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+
 
         </div>)
     }
@@ -149,7 +159,7 @@ class LoginComponent extends Component {
     }
     loginClicked() {
         if (this.state.username === 'sinan' && this.state.password === 'ulug') {
-            this.props.history.push(`/welcome/${this.state.username}`)
+            AuthenticationService.registerSuccesfulLogin(this.state.username,this.state.password);
             // this.setState({showSuccessMessage:true})
             // this.setState({hasLoginFailed:false})
         } else {
@@ -162,14 +172,15 @@ class LoginComponent extends Component {
     render() {
         return (
             <div>
-                {/* <ShowInvalidCredentials hasLoginFailed={this.state.hasLoginFailed}/> */}
-                {/* <ShowSuccesfullCredentials showSuccessMessage={this.state.showSuccessMessage}/> */}
-                {this.state.hasLoginFailed && <div>Invalid Credentials</div>}
-                {this.state.showSuccessMessage && <div>Successful</div>}
+                <h1>Login</h1>
+                <div className="container">
+                    {this.state.hasLoginFailed && <div className="alert alert-warning">Invalid Credentials</div>}
+                    {this.state.showSuccessMessage && <div>Successful</div>}
 
-                User Name: <input type="text" name="username" value={this.state.username} onChange={this.handleChange} />
-                User Password: <input type="password" name="password" value={this.state.password} onChange={this.handleChange} />
-                <button onClick={this.loginClicked}>Login</button>
+                    User Name: <input type="text" name="username" value={this.state.username} onChange={this.handleChange} />
+                    User Password: <input type="password" name="password" value={this.state.password} onChange={this.handleChange} />
+                    <button className="btn btn-success" onClick={this.loginClicked}>Login</button>
+                </div>
             </div>
         )
     }
