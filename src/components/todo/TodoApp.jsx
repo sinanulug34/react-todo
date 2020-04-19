@@ -2,27 +2,48 @@ import React, { Component } from 'react'
 import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom'
 import AuthenticationService from './AuthenticationService.js'
 
+const AppContext = React.createContext()
 class TodoApp extends Component {
+
+    state = {
+        isUserLoggedIn: AuthenticationService.isUserLoggedIn()
+    }
+
+    login = (username, password) => {
+        AuthenticationService.registerSuccesfulLogin(username, password);
+        this.setState({
+            isUserLoggedIn: true
+        })
+    }
+
+    logout = () => {
+        AuthenticationService.logout()
+        this.setState({
+            isUserLoggedIn: false
+        })
+    }
+
     render() {
         return (
-            <div className="TodoApp">
-                <Router>
-                    <>
-                        <HeaderComponent />
-                        <Switch>
-                            <Route path="/" exact component={LoginComponent} />
-                            <Route path="/login" component={LoginComponent} />
-                            <Route path="/welcome/:name" component={WelcomeComponent} />
-                            <Route path="/todos/" component={ListTodosComponent} />
-                            <Route path="/logout/" component={LogoutComponent} />
-                            <Route component={ErrorComponent} />
-                        </Switch>
-                        <FooterComponent />
-                    </>
+            <AppContext.Provider value={{ isUserLoggedIn: this.state.isUserLoggedIn, login: this.login, logout: this.logout }}>
+                <div className="TodoApp">
+                    <Router>
+                        <>
+                            <HeaderComponent />
+                            <Switch>
+                                <Route path="/" exact component={LoginComponent} />
+                                <Route path="/login" component={LoginComponent} />
+                                <Route path="/welcome/:name" component={WelcomeComponent} />
+                                <Route path="/todos/" component={ListTodosComponent} />
+                                <Route path="/logout/" component={LogoutComponent} />
+                                <Route component={ErrorComponent} />
+                            </Switch>
+                            <FooterComponent />
+                        </>
 
-                </Router>
-            </div>
-
+                    </Router>
+                </div>
+            </AppContext.Provider>
         )
     }
 }
@@ -38,23 +59,26 @@ class WelcomeComponent extends Component {
 }
 
 class HeaderComponent extends Component {
+
     render() {
+
         return (
-            <header>
-                <nav className="navbar navbar-expand-md navbar-dark bg-dark">
-                    <div><a href="https://tr.reactjs.org/tutorial/tutorial.html" className="navbar-brand">React Page</a></div>
-                    <ul className="navbar-nav">
-                        <li><Link className="nav-link" to="/welcome/in28minutes">Home</Link></li>
-                        <li><Link className="nav-link" to="/todos">Todos</Link></li>
-                    </ul>
+            <AppContext.Consumer>
+                {({ isUserLoggedIn, logout }) => <header>
+                    <nav className="navbar navbar-expand-md navbar-dark bg-dark">
+                        <div><a href="https://tr.reactjs.org/tutorial/tutorial.html" className="navbar-brand">React Page</a></div>
+                        <ul className="navbar-nav">
+                            <li><Link className="nav-link" to="/welcome/react">Home</Link></li>
+                            <li><Link className="nav-link" to="/todos">Todos</Link></li>
+                        </ul>
+                        <ul className="navbar-nav navbar-collapse justify-content-end">
+                            {isUserLoggedIn ? <li> <Link className="nav- link" to="/logout" onClick={logout}>Logout</Link></li> : < li > <Link className="nav-link" to="/login">Login</Link></li>}
 
-                    <ul className="navbar-nav navbar-collapse justify-content-end">
-                        <li> <Link className="nav-link" to="/login">Login</Link></li>
-                        <li> <Link className="nav-link" to="/logout">Logout</Link></li>
-                    </ul>
+                        </ul>
 
-                </nav>
-            </header>
+                    </nav>
+                </header >}
+            </AppContext.Consumer>
         )
     }
 }
@@ -105,17 +129,15 @@ class ListTodosComponent extends Component {
                     <thead>
                         <tr>
                             <th>id </th>
-                            <th>description</th>
+                            <th>Description</th>
                             <th>Target Date</th>
-                            <th>Is Completed?</th>
                         </tr>
                     </thead>
                     <tbody>
                         {
                             this.state.todos.map(
                                 todo =>
-                                    <tr>
-                                        <td>{todo.id}</td>
+                                    <tr key={todo.id}>
                                         <td>{todo.description}</td>
                                         <td>{todo.done.toString()}</td>
                                         <td>{todo.targetDate.toString()}</td>
@@ -157,9 +179,11 @@ class LoginComponent extends Component {
 
         )
     }
-    loginClicked() {
+    loginClicked(login) {
         if (this.state.username === 'sinan' && this.state.password === 'ulug') {
-            AuthenticationService.registerSuccesfulLogin(this.state.username,this.state.password);
+            login(this.state.username, this.state.password);
+            this.props.history.push(`/welcome/${this.state.username}`)
+
             // this.setState({showSuccessMessage:true})
             // this.setState({hasLoginFailed:false})
         } else {
@@ -171,17 +195,19 @@ class LoginComponent extends Component {
     }
     render() {
         return (
-            <div>
-                <h1>Login</h1>
-                <div className="container">
-                    {this.state.hasLoginFailed && <div className="alert alert-warning">Invalid Credentials</div>}
-                    {this.state.showSuccessMessage && <div>Successful</div>}
+            <AppContext.Consumer>
+                {({ login }) => <div>
+                    <h1>Login</h1>
+                    <div className="container">
+                        {this.state.hasLoginFailed && <div className="alert alert-warning">Invalid Credentials</div>}
+                        {this.state.showSuccessMessage && <div>Successful</div>}
 
-                    User Name: <input type="text" name="username" value={this.state.username} onChange={this.handleChange} />
-                    User Password: <input type="password" name="password" value={this.state.password} onChange={this.handleChange} />
-                    <button className="btn btn-success" onClick={this.loginClicked}>Login</button>
-                </div>
-            </div>
+                        User Name: <input type="text" name="username" value={this.state.username} onChange={this.handleChange} />
+                        User Password: <input type="password" name="password" value={this.state.password} onChange={this.handleChange} />
+                        <button className="btn btn-success" onClick={() => this.loginClicked(login)}>Login</button>
+                    </div>
+                </div>}
+            </AppContext.Consumer>
         )
     }
 }
