@@ -7,26 +7,28 @@ import TodoApp from './components/todo/TodoApp'
 import logo from './logo.svg';
 import './bootstrap.css';
 import './App.css';
-class App extends Component{
-  render (){
-    return (
-      <div className ="App"> 
-      {/*className="App"*/}
-      <TodoApp/>
-      </div>
-    );
-  }
+class App extends Component {
+    render() {
+        return ( <
+            div className = "App" > { /*className="App"*/ } <
+            TodoApp / >
+            <
+            /div>
+        );
+    }
 }
 
-class LearningComponents extends Component{
-  render (){
-    return (
-      <div className ="LearningComponents"> 
-        <FirstComponent/> 
-        <SecondComponent></SecondComponent>
-        <ThirdComponent> </ThirdComponent>
-      </div>
-    );
-  }
+class LearningComponents extends Component {
+    render() {
+        return ( <
+            div className = "LearningComponents" >
+            <
+            FirstComponent / >
+            <
+            SecondComponent > < /SecondComponent> <
+            ThirdComponent > < /ThirdComponent> <
+            /div>
+        );
+    }
 }
 export default App;
