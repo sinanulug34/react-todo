@@ -7,6 +7,7 @@ import FooterComponent from './FooterComponent.jsx'
 import WelcomeComponent from './WelcomeComponent.jsx'
 import ErrorComponent from './ErrorComponent.jsx'
 import ListTodosComponent from './ListTodosComponent.jsx'
+import TodoComponent from './TodoComponent.jsx'
 
 const AppContext = React.createContext()
 class TodoApp extends Component {
@@ -40,6 +41,7 @@ class TodoApp extends Component {
                                 <Route path="/" exact component={LoginComponent} />
                                 <Route path="/login" component={LoginComponent} />
                                 <AuthenticatedRoute path="/welcome/:name" component={WelcomeComponent} />
+                                <AuthenticatedRoute path="/todos/:id" component={TodoComponent} />
                                 <AuthenticatedRoute path="/todos/" component={ListTodosComponent} />
                                 <AuthenticatedRoute path="/logout/" component={LogoutComponent} />
                                 <Route component={ErrorComponent} />
